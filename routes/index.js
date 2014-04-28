@@ -104,10 +104,19 @@ router.post('/sms', function(req, res) {
         bacon_status = {date: new Date(), status: body};
         redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
           if(!err) {
-            var twiml_resp = new twilio.TwimlResponse();
-            twiml_resp.message('Oink. Got yer bacon update.');
-            console.log(twiml_resp.toString());
-            res.send(twiml_resp.toString());
+            redis.smembers("kir", function(err,values) {
+              if(!err) {
+                values.forEach(function(user, i) {
+                  if(user != from) {
+                    say(user,"Bacon status: " + body);                    
+                  }
+                })
+                var twiml_resp = new twilio.TwimlResponse();
+                twiml_resp.message('Oink. Got yer bacon update. Shared it.');
+                console.log(twiml_resp.toString());
+                res.send(twiml_resp.toString());                
+              }
+            })
           } else {
             console.log("DB error adding status");
             res.end();
