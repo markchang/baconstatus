@@ -11,8 +11,9 @@ router.get('/', function(req, res) {
 
 router.post('/sms', function(req, res) {
   console.log("SMS received");
-  console.log(req.param('from'));
-
+  console.log('From' + req.param('From'));
+  console.log('MessageSID' + req.param('MessageSid'));
+  console.log('Body' + req.param('Body'));
   res.end();
 })
 
