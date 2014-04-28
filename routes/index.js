@@ -30,35 +30,12 @@ router.post('/sms_test', function(req,res) {
 
   console.log("From: " + from + ", body: " + body);
 
-  redis.sismember("kir", from, function(err, values) {
-    if(values==0) {
-      console.log(from + " is not a member");
-      redis.sadd("kir", from, function(err, values) {
-        if(!err) {
-          console.log("Added " + from + " to user database");
-          res.send("Added");
-        } else {
-          res.send("error");
-        }
-      })
-    } else {
-      console.log(from + " is a member, parsing body");
-      if(body.toLowerCase()=="stop") {
-        redis.srem("kir", from, function(err, values) {
-          if(!err) {
-            console.log("Removing " + from);
-            res.send("Removing you");
-          } else {
-            console.log("Error removing " + from);
-            res.send("Shit");
-          }
-        })
-      } else {
-        console.log("Bacon status: " + body);
-        res.send("Got status");
-      }
-    }
-  })
+  var twiml_resp = new twilio.TwimlResponse();
+  twiml_resp.message('Okay');
+  console.log(twiml_resp.toString());
+
+  res.end();
+
 })
 
 router.post('/sms', function(req, res) {
@@ -98,7 +75,11 @@ router.post('/sms', function(req, res) {
         bacon_status = {date: new Date(), status: body};
         redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
           if(!err) {
-            say(from, 'Oink. Got it.')
+            var twiml_resp = new twilio.TwimlResponse();
+            twiml_resp.message('Oink. Got yer bacon update.');
+            console.log(twiml_resp.toString());
+            resp.send(twiml_resp.toString());
+            // say(from, 'Oink. Got it.')
           } else {
             console.log("DB error adding status");
           }
