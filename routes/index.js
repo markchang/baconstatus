@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var twilio = require('twilio');
+var client = new twilio.RestClient();
 
 
 /* GET home page. */
@@ -10,12 +11,9 @@ router.get('/', function(req, res) {
 
 router.post('/sms', function(req, res) {
   console.log("SMS received");
-  console.log(req.toString());
+  console.log(req.param('from'));
 
-  var resp = new twilio.TwimlResponse();
-  resp.say('got it');
-  console.log(resp.toString());
-  res.send(resp.toString());
+  res.end();
 })
 
 module.exports = router;
