@@ -3,10 +3,20 @@ var router = express.Router();
 var twilio = require('twilio');
 var client = new twilio.RestClient();
 var redis = require('redis-url').connect(process.env.REDISTOGO_URL);
+var moment = require('moment');
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index', { title: 'Express' });
+  // get current bacon status
+  redis.lrange("status", "0", "0", function(err, values) {
+    var bacon_status = JSON.parse(values);
+    var display_date = moment(bacon_status.date).fromNow();
+    console.log(bacon_status);
+
+    res.render('index', { title: 'Bacon Status', 
+                          status: bacon_status.status,
+                          date: display_date });
+  })
 });
 
 router.post('/sms_test', function(req,res) {
