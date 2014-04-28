@@ -54,8 +54,10 @@ router.post('/sms', function(req, res) {
       redis.sadd("kir", from, function(err, values) {
         if(!err) {
           console.log("Added " + from + " to user database");
-          say(from, 'You are now baconized. Say "bye" to quit.');
-          res.end();
+          var twiml_resp = new twilio.TwimlResponse();
+          twiml_resp.message('You are now baconized. Say "bye" to quit.');
+          console.log(twiml_resp.toString());
+          res.send(twiml_resp.toString());
         } else {
           console.log("Error adding user to redis");
           res.end();
@@ -67,8 +69,10 @@ router.post('/sms', function(req, res) {
         redis.srem("kir", from, function(err, values) {
           if(!err) {
             console.log("Removing " + from);
-            say(from, 'De-beconized.'); // might not send because stop already blocks
-            res.end();
+            var twiml_resp = new twilio.TwimlResponse();
+            twiml_resp.message('De-beconized.');
+            console.log(twiml_resp.toString());
+            res.send(twiml_resp.toString());
           } else {
             console.log("DB error removing " + from);
             res.end();
@@ -83,7 +87,6 @@ router.post('/sms', function(req, res) {
             twiml_resp.message('Oink. Got yer bacon update.');
             console.log(twiml_resp.toString());
             res.send(twiml_resp.toString());
-            // say(from, 'Oink. Got it.')
           } else {
             console.log("DB error adding status");
             res.end();
