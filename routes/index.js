@@ -65,19 +65,18 @@ router.post('/sms', function(req, res) {
       redis.sadd("kir", from, function(err, values) {
         if(!err) {
           console.log("Added " + from + " to user database");
-          say(from, '12065382935', 'You are now baconized.');
+          say(from, '12065382935', 'You are now baconized. Say "bye" to quit.');
         } else {
           console.log("Error adding user to redis");
         }
       })
     } else {
       console.log(from + " is a member, parsing body");
-      if(body.toLowerCase()=="stop") {
+      if(body.toLowerCase()=="stop" || body.toLowerCase()=="bye") {
         redis.srem("kir", from, function(err, values) {
           if(!err) {
             console.log("Removing " + from);
-            // say(from, '12065382935', 'De-beconized.');
-            // can't send because stop already blocks
+            say(from, '12065382935', 'De-beconized.'); // might not send because stop already blocks
           } else {
             console.log("DB error removing " + from);
           }
