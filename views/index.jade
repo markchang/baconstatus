@@ -2,4 +2,5 @@ extends layout
 
 block content
   h1= title
-  p #{status}, #{date}
+  - each update in updates
+    p #{update.status}, #{update.pretty_date}

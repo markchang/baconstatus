@@ -8,14 +8,16 @@ var moment = require('moment');
 /* GET home page. */
 router.get('/', function(req, res) {
   // get current bacon status
-  redis.lrange("status", "0", "0", function(err, values) {
-    var bacon_status = JSON.parse(values);
-    var display_date = moment(bacon_status.date).fromNow();
-    console.log(bacon_status);
-
+  redis.lrange("status", "0", "-1", function(err, values) {
+    var updates = [];
+    values.forEach(function(value, i) {
+      update = JSON.parse(value);
+      update.pretty_date = moment(update.date).fromNow();
+      updates.push(update);
+    })
     res.render('index', { title: 'Bacon Status', 
-                          status: bacon_status.status,
-                          date: display_date });
+                          updates: updates,
+                        });
   })
 });
 
