@@ -54,10 +54,18 @@ router.post('/sms', function(req, res) {
       redis.sadd("kir", from, function(err, values) {
         if(!err) {
           console.log("Added " + from + " to user database");
-          var twiml_resp = new twilio.TwimlResponse();
-          twiml_resp.message('You are now baconized. Say "bye" to quit.');
-          console.log(twiml_resp.toString());
-          res.send(twiml_resp.toString());
+          bacon_status = {date: new Date(), status: body};
+          redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
+            if(!err) {
+              var twiml_resp = new twilio.TwimlResponse();
+              twiml_resp.message('Oink. You\'ve been baconized. Say "bye" to quit.');
+              console.log(twiml_resp.toString());
+              res.send(twiml_resp.toString());
+            } else {
+              console.log("DB error adding status");
+              res.end();
+            }
+          })
         } else {
           console.log("Error adding user to redis");
           res.end();
