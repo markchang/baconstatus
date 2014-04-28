@@ -97,7 +97,9 @@ router.post('/sms', function(req, res) {
         console.log("Logging bacon status: " + body);
         bacon_status = {date: new Date(), status: body};
         redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
-          if(err) {
+          if(!err) {
+            say(from, 'Oink. Got it.')
+          } else {
             console.log("DB error adding status");
           }
         })
