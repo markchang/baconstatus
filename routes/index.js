@@ -36,7 +36,20 @@ router.post('/sms_test', function(req,res) {
 
   res.end();
 
-})
+});
+
+router.get('/users', function(req,res) {
+  console.log("Dumping users");
+
+  redis.smembers("kir", function(err,values) {
+    var users = [];
+    values.forEach(function(user, i) {
+      users.push(user);
+    })
+    res.render('users', { title: 'Bacon Users',
+                          users: users});
+  })
+});
 
 router.post('/sms', function(req, res) {
   // deets
@@ -103,7 +116,7 @@ router.post('/sms', function(req, res) {
       }
     }
   })
-})
+});
 
 function say(to, body) {
   client.sendSms({
