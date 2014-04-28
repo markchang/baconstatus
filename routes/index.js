@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
       update.pretty_date = moment(update.date).fromNow();
       updates.push(update);
     })
-    res.render('index', { title: 'Bacon Meter', 
+    res.render('index', { title: 'Bacon Status', 
                           updates: updates,
                         });
   })
