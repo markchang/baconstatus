@@ -78,7 +78,7 @@ router.post('/sms', function(req, res) {
             var twiml_resp = new twilio.TwimlResponse();
             twiml_resp.message('Oink. Got yer bacon update.');
             console.log(twiml_resp.toString());
-            resp.send(twiml_resp.toString());
+            res.send(twiml_resp.toString());
             // say(from, 'Oink. Got it.')
           } else {
             console.log("DB error adding status");
