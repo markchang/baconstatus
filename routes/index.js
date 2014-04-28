@@ -76,7 +76,8 @@ router.post('/sms', function(req, res) {
         redis.srem("kir", from, function(err, values) {
           if(!err) {
             console.log("Removing " + from);
-            say(from, '12065382935', 'De-beconized.');
+            // say(from, '12065382935', 'De-beconized.');
+            // can't send because stop already blocks
           } else {
             console.log("DB error removing " + from);
           }
