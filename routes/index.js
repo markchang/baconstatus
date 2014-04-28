@@ -65,7 +65,7 @@ router.post('/sms', function(req, res) {
       redis.sadd("kir", from, function(err, values) {
         if(!err) {
           console.log("Added " + from + " to user database");
-          say(from, '12065382935', 'You are now baconized. Say "bye" to quit.');
+          say(from, 'You are now baconized. Say "bye" to quit.');
         } else {
           console.log("Error adding user to redis");
         }
@@ -76,13 +76,19 @@ router.post('/sms', function(req, res) {
         redis.srem("kir", from, function(err, values) {
           if(!err) {
             console.log("Removing " + from);
-            say(from, '12065382935', 'De-beconized.'); // might not send because stop already blocks
+            say(from, 'De-beconized.'); // might not send because stop already blocks
           } else {
             console.log("DB error removing " + from);
           }
         })
       } else {
-        console.log("Bacon status: " + body);
+        console.log("Logging bacon status: " + body);
+        bacon_status = {date: new Date(), status: body};
+        redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
+          if(err) {
+            console.log("DB error adding status");
+          }
+        })
       }
     }
   })
@@ -90,10 +96,10 @@ router.post('/sms', function(req, res) {
   res.end();
 })
 
-function say(to, from, body) {
+function say(to, body) {
   client.sendSms({
       to: to,
-      from: from,
+      from: '12065382935',
       body: body
   }, function(error, message) {
       if (!error) {
