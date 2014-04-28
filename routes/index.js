@@ -55,8 +55,10 @@ router.post('/sms', function(req, res) {
         if(!err) {
           console.log("Added " + from + " to user database");
           say(from, 'You are now baconized. Say "bye" to quit.');
+          res.end();
         } else {
           console.log("Error adding user to redis");
+          res.end();
         }
       })
     } else {
@@ -66,8 +68,10 @@ router.post('/sms', function(req, res) {
           if(!err) {
             console.log("Removing " + from);
             say(from, 'De-beconized.'); // might not send because stop already blocks
+            res.end();
           } else {
             console.log("DB error removing " + from);
+            res.end();
           }
         })
       } else {
@@ -82,13 +86,12 @@ router.post('/sms', function(req, res) {
             // say(from, 'Oink. Got it.')
           } else {
             console.log("DB error adding status");
+            res.end();
           }
         })
       }
     }
   })
-
-  res.end();
 })
 
 function say(to, body) {
