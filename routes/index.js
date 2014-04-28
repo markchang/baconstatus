@@ -134,7 +134,7 @@ function say(to, body) {
       body: body
   }, function(error, message) {
       if (!error) {
-          console.log('Success! The SID for this SMS message is:');
+          console.log('Sent message to ' + to + ". SID:");;
           console.log(message.sid);
           console.log('Message sent on:');
           console.log(message.dateCreated);
