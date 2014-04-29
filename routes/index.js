@@ -38,19 +38,6 @@ router.post('/sms_test', function(req,res) {
 
 });
 
-router.get('/users', function(req,res) {
-  console.log("Dumping users");
-
-  redis.smembers("kir", function(err,values) {
-    var users = [];
-    values.forEach(function(user, i) {
-      users.push(user);
-    })
-    res.render('users', { title: 'Bacon Users',
-                          users: users});
-  })
-});
-
 router.post('/sms', function(req, res) {
   // deets
   console.log("SMS received");
