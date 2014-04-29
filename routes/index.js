@@ -21,6 +21,10 @@ router.get('/', function(req, res) {
   })
 });
 
+router.get('/about', function(req, res) {
+  res.render('about', { title: 'About Bacon Status'});
+});
+
 router.post('/sms_test', function(req,res) {
   console.log("Test SMS received");
 
