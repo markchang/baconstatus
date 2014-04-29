@@ -2,4 +2,5 @@ extends layout
 
 block content
   - each update in updates
-    p #{update.status}, #{update.pretty_date}
+    div.status #{update.status}
+      span.datestamp #{update.pretty_date}
