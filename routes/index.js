@@ -62,7 +62,7 @@ router.post('/sms', function(req, res) {
           redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
             if(!err) {
               var twiml_resp = new twilio.TwimlResponse();
-              twiml_resp.message('Oink. You\'ve been baconized. Say "bye" to quit.');
+              twiml_resp.message('Welcome to the club. Text me the current bacon status and I\'ll broadcast it to everyone and update the web page. Say "bye" to quit.');
               console.log(twiml_resp.toString());
               res.send(twiml_resp.toString());
             } else {
@@ -82,7 +82,7 @@ router.post('/sms', function(req, res) {
           if(!err) {
             console.log("Removing " + from);
             var twiml_resp = new twilio.TwimlResponse();
-            twiml_resp.message('De-beconized.');
+            twiml_resp.message('Fine. More bacon for us.');
             console.log(twiml_resp.toString());
             res.send(twiml_resp.toString());
           } else {
@@ -99,11 +99,11 @@ router.post('/sms', function(req, res) {
               if(!err) {
                 values.forEach(function(user, i) {
                   if(user != from) {
-                    say(user,"Bacon status: " + body);                    
+                    say(user, body);                    
                   }
                 })
                 var twiml_resp = new twilio.TwimlResponse();
-                twiml_resp.message('Oink. Got yer bacon update. Shared it.');
+                twiml_resp.message('Oink! Thanks for keeping the bacon status fresh.');
                 console.log(twiml_resp.toString());
                 res.send(twiml_resp.toString());                
               }
