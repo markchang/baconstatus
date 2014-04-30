@@ -1,3 +1,6 @@
+// TODO refactor the broadcast
+// TODO add broadcast on new member
+
 var express = require('express');
 var router = express.Router();
 var twilio = require('twilio');
