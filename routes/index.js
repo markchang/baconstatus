@@ -54,6 +54,7 @@ router.post('/sms', function(req, res) {
 
   redis.sismember("kir", from, function(err, values) {
     if(values==0) {
+      // new number: add user, save status, broadcast status
       console.log(from + " is not a member");
       redis.sadd("kir", from, function(err, values) {
         if(!err) {
@@ -78,7 +79,10 @@ router.post('/sms', function(req, res) {
         }
       })
     } else {
+      // existing member
       console.log(from + " is a member, parsing body");
+
+      // unsubscribe
       if(body.toLowerCase()=="stop" || body.toLowerCase()=="bye") {
         redis.srem("kir", from, function(err, values) {
           if(!err) {
@@ -92,7 +96,24 @@ router.post('/sms', function(req, res) {
             res.end();
           }
         })
-      } else {
+      } 
+
+      // get current status
+      else if(body.toLowerCase()=="status") {
+        redis.lrange("status", "0", "0", function(err, values) {
+          // really assume one here, but let's put it into a loop, right? ugly!
+          values.forEach(function(value, i) {
+            status = JSON.parse(value);
+            status.pretty_date = moment(status.date).fromNow();
+            var twiml_resp = new Twilio.TwimlResponse();
+            twiml_resp.message(status.status + ' | ' + status.pretty_date);
+            res.send(twiml_resp.toString());
+          })
+        })
+      }
+
+      // status update
+      else {
         console.log("Logging bacon status: " + body);
         bacon_status = {date: new Date(), status: body};
         redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
