@@ -1,6 +1,3 @@
-// TODO refactor the broadcast
-// TODO add broadcast on new member
-
 var express = require('express');
 var router = express.Router();
 var twilio = require('twilio');
@@ -64,6 +61,8 @@ router.post('/sms', function(req, res) {
           bacon_status = {date: new Date(), status: body};
           redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
             if(!err) {
+              broadcast(from, body);
+
               var twiml_resp = new twilio.TwimlResponse();
               twiml_resp.message('Welcome to the club. Text me the current bacon status and I\'ll broadcast it to everyone and update the web page. Say "bye" to quit.');
               console.log(twiml_resp.toString());
@@ -98,19 +97,11 @@ router.post('/sms', function(req, res) {
         bacon_status = {date: new Date(), status: body};
         redis.lpush("status", JSON.stringify(bacon_status), function(err, values) {
           if(!err) {
-            redis.smembers("kir", function(err,values) {
-              if(!err) {
-                values.forEach(function(user, i) {
-                  if(user != from) {
-                    say(user, body);                    
-                  }
-                })
-                var twiml_resp = new twilio.TwimlResponse();
-                twiml_resp.message('Oink! Thanks for keeping the bacon status fresh.');
-                console.log(twiml_resp.toString());
-                res.send(twiml_resp.toString());                
-              }
-            })
+            broadcast(from, body);
+            var twiml_resp = new twilio.TwimlResponse();
+            twiml_resp.message('Oink! Thanks for keeping the bacon status fresh.');
+            console.log(twiml_resp.toString());
+            res.send(twiml_resp.toString());                
           } else {
             console.log("DB error adding status");
             res.end();
@@ -120,6 +111,20 @@ router.post('/sms', function(req, res) {
     }
   })
 });
+
+function broadcast(from, status) {
+  redis.smembers("kir", function(err, values) {
+    if(!err) {
+      values.forEach(function(user, i) {
+        if( user != from ) {
+          say (user, status);
+        }
+      })
+    } else {
+      console.log("Error fetching users from redis for broadcast.");
+    }
+  })
+}
 
 function say(to, body) {
   client.sendSms({
