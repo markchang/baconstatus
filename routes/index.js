@@ -105,7 +105,7 @@ router.post('/sms', function(req, res) {
           values.forEach(function(value, i) {
             status = JSON.parse(value);
             status.pretty_date = moment(status.date).fromNow();
-            var twiml_resp = new Twilio.TwimlResponse();
+            var twiml_resp = new twilio.TwimlResponse();
             twiml_resp.message(status.status + ' | ' + status.pretty_date);
             res.send(twiml_resp.toString());
           })
